@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 class CustomAuthController extends Controller
 {
 
+    // Home page
     public function index()
     {
         if (Auth::check()) {
@@ -20,7 +21,7 @@ class CustomAuthController extends Controller
         return view('auth.login');
     }
 
-
+    // User Login Post
     public function customLogin(Request $request)
     {
         $request->validate([
@@ -33,12 +34,11 @@ class CustomAuthController extends Controller
             return redirect()->intended('dashboard')
                 ->withSuccess('Signed in');
         }
-
         return redirect("login")->withSuccess('Login details are not valid');
     }
 
 
-
+    // User Registration Get
     public function registration()
     {
         if (Auth::check()) {
@@ -47,7 +47,7 @@ class CustomAuthController extends Controller
         return view('auth.registration');
     }
 
-
+    // User Registration Post
     public function customRegistration(Request $request)
     {
         $request->validate([
@@ -60,11 +60,10 @@ class CustomAuthController extends Controller
 
         $data = $request->all();
         $check = $this->create($data);
-
         return redirect("dashboard")->withSuccess('You have signed-in');
     }
 
-
+    // function for Create User 
     public function create(array $data)
     {
         return User::create([
@@ -75,7 +74,7 @@ class CustomAuthController extends Controller
         ]);
     }
 
-
+    // Show Dashboard 
     public function dashboard()
     {
         if (Auth::check()) {
@@ -83,9 +82,10 @@ class CustomAuthController extends Controller
             $allUser = User::where('id', '!=', $userData['id'])->get()->toArray();
             return view('dashboard')->with('allUser', $allUser);
         }
-
         return redirect("login")->withSuccess('You are not allowed to access');
     }
+
+    // Show Profile 
     public function profile()
     {
         if (Auth::check()) {
@@ -94,6 +94,9 @@ class CustomAuthController extends Controller
         }
         return redirect("login")->withSuccess('You are not allowed to access');
     }
+
+
+    // update Profile 
     public function profileUpdate(Request $request)
     {
         if ($request->file('profile_image')) {
@@ -106,7 +109,6 @@ class CustomAuthController extends Controller
             })->save($destinationPath . $profile_image);
             $request->profile_image = $profile_image;
         }
-
 
         if (Auth::check()) {
             $data = $request->all();
@@ -136,7 +138,7 @@ class CustomAuthController extends Controller
 
 
 
-
+    // Delete Profile 
     public function ProfileDestroy($id)
     {
         if (Auth::check()) {
@@ -145,6 +147,8 @@ class CustomAuthController extends Controller
         }
         return redirect("login");
     }
+
+    // Change users Profile details 
     public function ProfileChange(Request $request, $id)
     {
         if (Auth::check()) {
@@ -159,6 +163,8 @@ class CustomAuthController extends Controller
         }
         return redirect("login");
     }
+
+    // User signOut
     public function signOut()
     {
         Session::flush();
